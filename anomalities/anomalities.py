@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from __future__ import annotations
+#from __future__ import annotations
 from typing import List
 from schema.schema import AnomalySpecification
 

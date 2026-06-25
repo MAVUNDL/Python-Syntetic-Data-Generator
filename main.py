@@ -1,6 +1,7 @@
-def main():
-    print("Hello from syntetic-data-generator!")
+from pipeline.pipeline import Pipeline
 
+pipeline = Pipeline.from_config("config\\config.yaml")
 
-if __name__ == "__main__":
-    main()
+df = pipeline.run(n_rows=1000, seed=42)
+
+df.to_csv("data\\dataset.csv")

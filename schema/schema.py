@@ -10,7 +10,7 @@ class FieldSpecification:
     name: str
     distribution: Distribution
     dtype: str = "object"
-    unique_id: bool = False
+    unique_per_id: bool = False
     nullable: bool = True
     temporal: bool = False
 

@@ -1,0 +1,134 @@
+# examples/retail_config.yaml
+# Full retail transactions dataset with schema drift enabled
+name: retail
+primary_key: id
+
+records_per_primary_key:
+  type: lognormal
+  mu: 3.5
+  sigma: 0.75
+
+anomalies:
+  - name: missing_values
+    prob: 1.0
+    rate: 0.05
+    columns: any
+
+  - name: duplicate_values
+    prob: 0.3
+    rate: 0.02
+
+  - name: invalid_category
+    prob: 0.2
+    rate: 0.03
+    columns: [product_name, payment_method]
+
+  - name: invalid_date
+    prob: 0.2
+    rate: 0.02
+    columns: [date]
+
+  - name: outliers
+    prob: 0.2
+    rate: 0.05
+    columns: [unit_price]
+    distribution:
+      type: lognormal
+      mu: 6.0
+      sigma: 0.5
+
+# Schema drift — fires 30% of the time, simulating upstream source changes
+schema_drift:
+  prob: 0.3
+  rename_columns: true
+  drop_columns: true
+  add_columns: true
+  change_dtype: true
+  reorder_columns: true
+  rename_rate: 0.15
+  drop_rate: 0.1
+  add_count: 1
+
+fields:
+  - name: id
+    unique_per_id: true
+    dtype: int32
+    nullable: false
+    distribution:
+      type: sequential
+      start: 1
+
+  - name: date
+    unique_per_id: true
+    dtype: object
+    nullable: false
+    temporal: true
+    distribution:
+      type: sequential
+      start: "2023-01-01"
+      step: 1
+
+  - name: store_id
+    unique_per_id: true
+    dtype: int32
+    nullable: false
+    distribution:
+      type: weighted_choice
+      values: [1, 2, 3, 4, 5]
+      weights: [0.5, 0.2, 0.1, 0.1, 0.1]
+
+  - name: customer_id
+    unique_per_id: true
+    dtype: int32
+    nullable: false
+    distribution:
+      type: uniform
+      min: 1000
+      max: 9999
+
+  - name: product
+    unique_per_id: false
+    dtype: object
+    nullable: false
+    distribution:
+      type: weighted_choice_mapping
+      columns:
+        product_id:   [1001, 1002, 1003, 1004, 1005]
+        product_name: [Widget, Gadget, Doohickey, Thingamajig, Whatsit]
+      weights: [0.4, 0.2, 0.2, 0.1, 0.1]
+
+  - name: quantity
+    unique_per_id: false
+    dtype: int32
+    nullable: false
+    distribution:
+      type: uniform
+      min: 1
+      max: 10
+
+  - name: unit_price
+    unique_per_id: false
+    dtype: float32
+    nullable: false
+    distribution:
+      type: lognormal
+      mu: 3.5
+      sigma: 0.75
+
+  - name: payment_method
+    unique_per_id: true
+    dtype: object
+    nullable: true
+    distribution:
+      type: weighted_choice
+      values: [credit_card, cash, store_credit]
+      weights: [0.8, 0.15, 0.05]
+
+  - name: region
+    unique_per_id: true
+    dtype: object
+    nullable: true
+    distribution:
+      type: weighted_choice
+      values: [north, south, east, west]
+      weights: [0.4, 0.3, 0.2, 0.1]

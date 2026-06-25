@@ -12,9 +12,9 @@ class Distribution:
 
 @dataclass
 class Uniform(Distribution):
-    def __init__(self, min_val: float, max_val: float):
-        self.min = min_val
-        self.max = max_val
+    def __init__(self, min: float, max: float):
+        self.min = min
+        self.max = max
 
     def sample(self, n: int, gen: np.random.Generator) -> np.ndarray:
         return gen.uniform(self.min, self.max, n)
@@ -106,7 +106,7 @@ class WeightedChoice(Distribution):
     def sample(self, n: int, gen: np.random.Generator) -> np.ndarray:
         w = np.array(self.weigths, dtype=float)
         w = w / w.sum()
-        index = gen.choice(len(self.values), n=n, p=w)
+        index = gen.choice(len(self.values), size=n, p=w)
         return np.array(self.values)[index]
 
 
@@ -126,7 +126,7 @@ class WeightedChoiceMapping(Distribution):
 
 @dataclass
 class Sequential(Distribution):
-    def __init__(self, start: any):
+    def __init__(self, start: any, step: int = 1):
         self.start = start
         self.step: int = 1
     
